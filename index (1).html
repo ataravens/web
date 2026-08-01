@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZingSpeed Mobile - Leaderboard 4P Auto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background-color: #06080c;
+      color: #fff;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px 10px 100px 10px;
+      gap: 20px;
+    }
+
+    /* --- ADMIN CONTROL --- */
+    .admin-panel {
+      width: 100%;
+      max-width: 960px;
+      background: #111622;
+      border: 2px solid #233148;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .admin-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #f7a618;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #233148;
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-reset {
+      background: #e63946;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-weight: 800;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #ff4d5a;
+    }
+
+    .admin-section {
+      margin-bottom: 15px;
+    }
+
+    .admin-section label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8da1bc;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .player-admin-card {
+      background: #090d14;
+      border: 1px solid #233148;
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-panel input {
+      background: #080a0e;
+      border: 1px solid #2c3e5e;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .admin-panel input:focus {
+      outline: none;
+      border-color: #f7a618;
+    }
+
+    .dnf-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #e65c5c;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .dnf-option input {
+      width: auto;
+      cursor: pointer;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: #f7a618;
+      color: #000;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .btn-next-round {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #000;
+      background: #00ffcc;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.15s;
+      text-transform: uppercase;
+      margin-top: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+    }
+
+    .btn-next-round:hover {
+      background: #33ffd6;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.7);
+    }
+
+    .btn-next-round:active {
+      transform: scale(0.98);
+    }
+
+    /* --- LEADERBOARD --- */
+    .container {
+      width: 100%;
+      max-width: 960px;
+      background: #080b10;
+      border: 2px solid #233148;
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(0, 162, 255, 0.15), 0 15px 35px rgba(0, 0, 0, 0.9);
+      overflow-x: auto;
+    }
+
+    .header {
+      background: linear-gradient(90deg, #0d121c 0%, #1a2336 50%, #0d121c 100%);
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 2px solid #2c3e5e;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header .sub-title, .header .match-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: #627897;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      font-style: italic;
+      background: linear-gradient(180deg, #ffffff 30%, #7ca1d9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: radial-gradient(circle, rgba(16,24,38,0.8) 0%, rgba(5,8,14,0.98) 100%);
+      min-width: 500px;
+    }
+
+    .results-table th, .results-table td {
+      border: 1px solid #1d2738;
+      text-align: center;
+      padding: 8px 6px;
+    }
+
+    .results-table th.player-header {
+      background: #111824;
+      color: #f7a618;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      width: 18.75%;
+    }
+
+    .results-table th.round-col-header {
+      background: #0b1019;
+      color: #8da1bc;
+      font-size: 12px;
+      font-weight: 800;
+      width: 25%;
+    }
+
+    .round-row:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .round-label {
+      background: linear-gradient(180deg, #ffc83b 0%, #e68a00 100%);
+      color: #1a1100;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .score-cell {
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .total-row {
+      background: #0d131f;
+      border-top: 2px solid #2c3e5e;
+    }
+
+    .total-label {
+      color: #8da1bc;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .total-score {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffb700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- BẢNG ĐIỀU KHIỂN ADMIN -->
+  <div class="admin-panel">
+    <div class="admin-title">
+      <span>🏎️ Quản Lý 4 Người (Tính Kỷ Lục)</span>
+      <button class="btn-reset" onclick="resetAllData()">🔄 RESET TẤT CẢ</button>
+    </div>
+    
+    <!-- Tên tuyển thủ -->
+    <div class="admin-section">
+      <label>Tên 4 Tay Đua:</label>
+      <div class="inputs-grid">
+        <input type="text" id="p0-name" value="Tuyển thủ 1" oninput="updatePlayerNames()">
+        <input type="text" id="p1-name" value="Tuyển thủ 2" oninput="updatePlayerNames()">
+        <input type="text" id="p2-name" value="Tuyển thủ 3" oninput="updatePlayerNames()">
+        <input type="text" id="p3-name" value="Tuyển thủ 4" oninput="updatePlayerNames()">
+      </div>
+    </div>
+
+    <!-- Nhập thời gian -->
+    <div class="admin-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 13px; color: #8da1bc; font-weight: 700;">ĐANG TRONG ROUND:</span>
+        <span class="status-badge" id="current-round-status">ROUND 1</span>
+      </div>
+
+      <input type="text" id="custom-round-name" placeholder="Tên Map đấu (Tùy chọn, VD: Bến Xe Điện)" style="width: 100%; margin-bottom: 12px;">
+
+      <div class="inputs-grid">
+        <div class="player-admin-card">
+          <span id="lbl-p0" style="font-weight: bold; color: #f7a618; font-size: 13px;">Tuyển thủ 1</span>
+          <input type="text" id="p0-time" placeholder="VD: 1:20.50">
+          <label class="dnf-option"><input type="checkbox" id="p0-dnf" checked> DNF (0đ)</label>
+        </div>
+        <div class="player-admin-card">
+          <span id="lbl-p1" style="font-weight: bold; color: #f7a618; font-size: 13px;">Tuyển thủ 2</span>
+          <input type="text" id="p1-time" placeholder="VD: 1:20.50">
+          <label class="dnf-option"><input type="checkbox" id="p1-dnf" checked> DNF (0đ)</label>
+        </div>
+        <div class="player-admin-card">
+          <span id="lbl-p2" style="font-weight: bold; color: #f7a618; font-size: 13px;">Tuyển thủ 3</span>
+          <input type="text" id="p2-time" placeholder="VD: 1:20.50">
+          <label class="dnf-option"><input type="checkbox" id="p2-dnf" checked> DNF (0đ)</label>
+        </div>
+        <div class="player-admin-card">
+          <span id="lbl-p3" style="font-weight: bold; color: #f7a618; font-size: 13px;">Tuyển thủ 4</span>
+          <input type="text" id="p3-time" placeholder="VD: 1:20.50">
+          <label class="dnf-option"><input type="checkbox" id="p3-dnf" checked> DNF (0đ)</label>
+        </div>
+      </div>
+
+      <button class="btn-next-round" onclick="saveAndNextRound()">➡️ LƯU & CHUYỂN ROUND TIẾP THEO</button>
+    </div>
+  </div>
+
+  <!-- BẢNG LEADERBOARD -->
+  <div class="container">
+    <div class="header">
+      <span class="sub-title">ZINGSPEED MOBILE</span>
+      <h1>LEADERBOARD 4 PLAYERS</h1>
+      <span class="match-info">GROUP STAGE</span>
+    </div>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th class="round-col-header">ROUND / MAP</th>
+          <th class="player-header" id="th-p0">Tuyển thủ 1</th>
+          <th class="player-header" id="th-p1">Tuyển thủ 2</th>
+          <th class="player-header" id="th-p2">Tuyển thủ 3</th>
+          <th class="player-header" id="th-p3">Tuyển thủ 4</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+      <tfoot id="table-footer"></tfoot>
+    </table>
+  </div>
+</div>
+
+  <script>
+    let players4P = ["Tuyển thủ 1", "Tuyển thủ 2", "Tuyển thủ 3", "Tuyển thủ 4"];
+    let currentRound = 1;
+    let data4P = {};
+
+    function initData() {
+      data4P = {};
+      for (let r = 1; r <= 9; r++) {
+        data4P[r] = { customName: "", times: ["", "", "", ""], dnf: [true, true, true, true], scores: [0, 0, 0, 0] };
+      }
+      currentRound = 1;
+      resetInputFields();
+    }
+
+    function parseTimeToSeconds(timeStr) {
+      if (!timeStr) return null;
+      timeStr = timeStr.trim();
+      if (timeStr.includes(':')) {
+        let parts = timeStr.split(':');
+        let mins = parseFloat(parts[0]) || 0;
+        let secs = parseFloat(parts[1]) || 0;
+        return mins * 60 + secs;
+      }
+      let secs = parseFloat(timeStr);
+      return isNaN(secs) ? null : secs;
+    }
+
+    function updatePlayerNames() {
+      for (let i = 0; i < 4; i++) {
+        let val = document.getElementById(`p${i}-name`).value || `Tuyển thủ ${i+1}`;
+        players4P[i] = val;
+        document.getElementById(`lbl-p${i}`).innerText = val;
+        document.getElementById(`th-p${i}`).innerText = val;
+      }
+      renderUI();
+    }
+
+    function resetInputFields() {
+      document.getElementById('custom-round-name').value = "";
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`p${i}-time`).value = "";
+        document.getElementById(`p${i}-dnf`).checked = true;
+      }
+    }
+
+    function saveAndNextRound() {
+      if (currentRound > 9) return;
+
+      let mapName = document.getElementById('custom-round-name').value.trim();
+      let rawTimes = [];
+      let secTimes = [];
+      let dnfs = [];
+      let finalScores = new Array(4).fill(0);
+
+      for (let i = 0; i < 4; i++) {
+        let timeVal = document.getElementById(`p${i}-time`).value;
+        let isDnf = document.getElementById(`p${i}-dnf`).checked;
+        let sec = parseTimeToSeconds(timeVal);
+
+        rawTimes.push(timeVal);
+        dnfs.push(isDnf);
+
+        if (isDnf || sec === null || sec <= 0) secTimes.push(null);
+        else secTimes.push(sec);
+      }
+
+      let validTimes = secTimes.filter(t => t !== null);
+      let bestTime = validTimes.length > 0 ? Math.min(...validTimes) : null;
+
+      for (let i = 0; i < 4; i++) {
+        if (dnfs[i] || secTimes[i] === null || bestTime === null) {
+          finalScores[i] = 0;
+        } else {
+          let gap = secTimes[i] - bestTime;
+          gap = Math.round(gap * 100) / 100;
+
+          if (gap === 0) {
+            finalScores[i] = 11;
+          } else {
+            let penalty = Math.floor(gap) + 1;
+            let score = 11 - penalty;
+            finalScores[i] = score > 0 ? score : 0;
+          }
+        }
+      }
+
+      data4P[currentRound] = {
+        customName: mapName,
+        times: rawTimes,
+        dnf: dnfs,
+        scores: finalScores
+      };
+
+      currentRound++;
+      resetInputFields();
+      renderUI();
+    }
+
+    function resetAllData() {
+      initData();
+      renderUI();
+    }
+
+    function renderUI() {
+      const tbody = document.getElementById('table-body');
+      const tfoot = document.getElementById('table-footer');
+      const statusBadge = document.getElementById('current-round-status');
+
+      if (!tbody || !tfoot) return;
+
+      if (currentRound <= 9) {
+        statusBadge.innerText = `ROUND ${currentRound}`;
+      } else {
+        statusBadge.innerText = `HOÀN THÀNH 9 ROUND`;
+      }
+
+      tbody.innerHTML = "";
+      let totals = [0, 0, 0, 0];
+
+      for (let r = 1; r <= 9; r++) {
+        const round = data4P[r];
+        let displayName = (round && round.customName && round.customName.trim() !== "") ? round.customName : `ROUND ${r}`;
+        let cells = "";
+
+        for (let i = 0; i < 4; i++) {
+          let score = (round && round.scores) ? round.scores[i] : 0;
+          totals[i] += score;
+          let isDnf = round ? round.dnf[i] : true;
+          cells += `<td class="score-cell">${isDnf ? "0" : `+${score}`}</td>`;
+        }
+
+        tbody.innerHTML += `<tr class="round-row"><td class="round-label">${displayName}</td>${cells}</tr>`;
+      }
+
+      tfoot.innerHTML = `
+        <tr class="total-row">
+          <td class="total-label">TỔNG ĐIỂM KỶ LỤC</td>
+          ${totals.map(t => `<td class="total-score">${t}</td>`).join('')}
+        </tr>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initData();
+      renderUI();
+    });
+  </script>
+</body>
+</html>
