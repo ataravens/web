@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZingSpeed Mobile - Solo 1v1 BO3 Auto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background-color: #06080c;
+      color: #fff;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px 10px 100px 10px;
+      gap: 20px;
+    }
+
+    /* --- ADMIN CONTROL --- */
+    .admin-panel {
+      width: 100%;
+      max-width: 960px;
+      background: #111622;
+      border: 2px solid #233148;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .admin-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #f7a618;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #233148;
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-reset {
+      background: #e63946;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      font-weight: 800;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #ff4d5a;
+    }
+
+    .admin-section {
+      margin-bottom: 15px;
+    }
+
+    .admin-section label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8da1bc;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .inputs-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .player-admin-card {
+      background: #090d14;
+      border: 1px solid #233148;
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .admin-panel input {
+      background: #080a0e;
+      border: 1px solid #2c3e5e;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .admin-panel input:focus {
+      outline: none;
+      border-color: #f7a618;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: #f7a618;
+      color: #000;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .win-btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      background: #1a2638;
+      border: 2px solid #2c3e5e;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.15s;
+      text-transform: uppercase;
+    }
+
+    .win-btn:hover {
+      background: #23334d;
+      border-color: #00ffcc;
+      color: #00ffcc;
+    }
+
+    .win-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* --- LEADERBOARD --- */
+    .container {
+      width: 100%;
+      max-width: 960px;
+      background: #080b10;
+      border: 2px solid #233148;
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(0, 162, 255, 0.15), 0 15px 35px rgba(0, 0, 0, 0.9);
+      overflow-x: auto;
+    }
+
+    .header {
+      background: linear-gradient(90deg, #0d121c 0%, #1a2336 50%, #0d121c 100%);
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 2px solid #2c3e5e;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header .sub-title, .header .match-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: #627897;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      font-style: italic;
+      background: linear-gradient(180deg, #ffffff 30%, #7ca1d9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: radial-gradient(circle, rgba(16,24,38,0.8) 0%, rgba(5,8,14,0.98) 100%);
+      min-width: 450px;
+    }
+
+    .results-table th, .results-table td {
+      border: 1px solid #1d2738;
+      text-align: center;
+      padding: 8px 6px;
+    }
+
+    .results-table th.player-header {
+      background: #111824;
+      color: #f7a618;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      width: 37.5%;
+    }
+
+    .results-table th.round-col-header {
+      background: #0b1019;
+      color: #8da1bc;
+      font-size: 12px;
+      font-weight: 800;
+      width: 25%;
+    }
+
+    .round-row:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .round-label {
+      background: linear-gradient(180deg, #ffc83b 0%, #e68a00 100%);
+      color: #1a1100;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .score-cell {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .win-badge {
+      font-size: 11px;
+      background: #00ffcc;
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 800;
+      box-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+    }
+
+    .loss-text {
+      color: #556880;
+    }
+
+    .total-row {
+      background: #090e17;
+      border-top: 1px solid #2c3e5e;
+    }
+
+    .total-label {
+      color: #8da1bc;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .total-score {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .bo-score-row {
+      background: #172030;
+      border-top: 2px solid #f7a618;
+    }
+
+    .bo-score-cell {
+      font-size: 24px;
+      font-weight: 800;
+      color: #00ffcc;
+      text-shadow: 0 0 12px rgba(0, 255, 204, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- BẢNG ĐIỀU KHIỂN ADMIN -->
+  <div class="admin-panel">
+    <div class="admin-title">
+      <span>⚔️ Quản Lý Solo 1v1 BO3</span>
+      <button class="btn-reset" onclick="resetAllData()">🔄 RESET TẤT CẢ</button>
+    </div>
+    
+    <!-- Tên tuyển thủ -->
+    <div class="admin-section">
+      <label>Tên 2 Tay Đua:</label>
+      <div class="inputs-grid-2">
+        <input type="text" id="p0-name" value="Tay đua A" oninput="updatePlayerNames()">
+        <input type="text" id="p1-name" value="Tay đua B" oninput="updatePlayerNames()">
+      </div>
+    </div>
+
+    <!-- Nhập kết quả -->
+    <div class="admin-section">
+      <div class="player-admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 13px; color: #8da1bc; font-weight: 700;">ĐANG TRONG TRẬN:</span>
+          <span class="status-badge" id="current-match-status">BO 1 - ROUND 1</span>
+        </div>
+
+        <input type="text" id="custom-round-name" placeholder="Tên Map đấu (Tùy chọn)" style="width: 100%; margin-bottom: 12px;">
+
+        <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+          <button class="win-btn" id="btn-win-p0" onclick="recordWin(0)">🏆 <span id="lbl-btn-p0">Tay đua A</span> WIN</button>
+          <button class="win-btn" id="btn-win-p1" onclick="recordWin(1)">🏆 <span id="lbl-btn-p1">Tay đua B</span> WIN</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BẢNG LEADERBOARD -->
+  <div class="container">
+    <div class="header">
+      <span class="sub-title">ZINGSPEED MOBILE</span>
+      <h1>SOLO 1v1 BO3</h1>
+      <span class="match-info">FIRST TO 5 WINS</span>
+    </div>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th class="round-col-header">ROUND / MAP</th>
+          <th class="player-header" id="th-p0">Tay đua A</th>
+          <th class="player-header" id="th-p1">Tay đua B</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+      <tfoot id="table-footer"></tfoot>
+    </table>
+  </div>
+</div>
+
+  <script>
+    let players2P = ["Tay đua A", "Tay đua B"];
+    let currentBO = 1;
+    let currentRound = 1;
+
+    let data2P = {};
+    
+    function initData() {
+      data2P = { 1: {}, 2: {}, 3: {} };
+      for (let bo = 1; bo <= 3; bo++) {
+        for (let r = 1; r <= 9; r++) {
+          data2P[bo][r] = { customName: "", winner: -1 };
+        }
+      }
+      currentBO = 1;
+      currentRound = 1;
+    }
+
+    function updatePlayerNames() {
+      players2P[0] = document.getElementById('p0-name').value || "Tay đua A";
+      players2P[1] = document.getElementById('p1-name').value || "Tay đua B";
+
+      document.getElementById('lbl-btn-p0').innerText = players2P[0];
+      document.getElementById('lbl-btn-p1').innerText = players2P[1];
+      document.getElementById('th-p0').innerText = players2P[0];
+      document.getElementById('th-p1').innerText = players2P[1];
+
+      renderUI();
+    }
+
+    function recordWin(winnerIdx) {
+      if (currentBO > 3) {
+        return;
+      }
+
+      const mapInput = document.getElementById('custom-round-name');
+      const mapName = mapInput.value.trim();
+
+      // Lưu kết quả trận hiện tại
+      data2P[currentBO][currentRound].winner = winnerIdx;
+      data2P[currentBO][currentRound].customName = mapName;
+
+      // Xóa ô nhập tên Map để sẵn sàng cho round sau
+      mapInput.value = "";
+
+      // Kiểm tra xem BO này có ai chạm 5 thắng chưa
+      let wins = [0, 0];
+      for (let r = 1; r <= 9; r++) {
+        if (data2P[currentBO][r].winner === 0) wins[0]++;
+        if (data2P[currentBO][r].winner === 1) wins[1]++;
+      }
+
+      // Tự nhảy BO hoặc Round không cần thông báo
+      if (wins[0] >= 5 || wins[1] >= 5) {
+        currentBO++;
+        currentRound = 1;
+      } else {
+        currentRound++;
+        if (currentRound > 9) {
+          currentBO++;
+          currentRound = 1;
+        }
+      }
+
+      renderUI();
+    }
+
+    function resetAllData() {
+      // Xoá trực tiếp không cần confirm
+      initData();
+      document.getElementById('custom-round-name').value = "";
+      renderUI();
+    }
+
+    function renderUI() {
+      const tbody = document.getElementById('table-body');
+      const tfoot = document.getElementById('table-footer');
+      const statusBadge = document.getElementById('current-match-status');
+
+      if (!tbody || !tfoot) return;
+
+      if (currentBO <= 3) {
+        statusBadge.innerText = `BO ${currentBO} - ROUND ${currentRound}`;
+      } else {
+        statusBadge.innerText = `HOÀN THÀNH BO3`;
+      }
+
+      tbody.innerHTML = "";
+      let boWins = [0, 0];
+
+      for (let bo = 1; bo <= 3; bo++) {
+        let roundWins = [0, 0];
+
+        tbody.innerHTML += `
+          <tr style="background: #121a29; border-top: 2px solid #2c3e5e;">
+            <td colspan="3" style="text-align: left; padding: 6px 12px; font-weight: 800; color: #ffb700; font-size: 13px; letter-spacing: 1px;">
+              --- BO ${bo} (CHẠM 5 WIN) ---
+            </td>
+          </tr>
+        `;
+
+        for (let r = 1; r <= 9; r++) {
+          const round = data2P[bo][r];
+          let displayName = (round && round.customName && round.customName.trim() !== "") ? round.customName : `BO${bo} - R${r}`;
+          let cells = "";
+
+          if (round && round.winner === 0) {
+            roundWins[0] += 1;
+            cells = `<td class="score-cell"><span class="win-badge">WIN</span></td><td class="score-cell loss-text">-</td>`;
+          } else if (round && round.winner === 1) {
+            roundWins[1] += 1;
+            cells = `<td class="score-cell loss-text">-</td><td class="score-cell"><span class="win-badge">WIN</span></td>`;
+          } else {
+            cells = `<td class="score-cell loss-text">-</td><td class="score-cell loss-text">-</td>`;
+          }
+
+          tbody.innerHTML += `<tr class="round-row"><td class="round-label">${displayName}</td>${cells}</tr>`;
+        }
+
+        let boStatusText = "";
+        if (roundWins[0] >= 5) {
+          boWins[0] += 1;
+          boStatusText = `<span style="color: #00ffcc; font-weight: 800;">[THẮNG BO ${bo}]</span>`;
+        } else if (roundWins[1] >= 5) {
+          boWins[1] += 1;
+          boStatusText = `<span style="color: #00ffcc; font-weight: 800;">[THẮNG BO ${bo}]</span>`;
+        } else {
+          boStatusText = `<span style="color: #8da1bc;">(${roundWins[0]} - ${roundWins[1]})</span>`;
+        }
+
+        tbody.innerHTML += `
+          <tr class="total-row">
+            <td class="total-label">ROUND THẮNG BO ${bo} ${boStatusText}</td>
+            <td class="total-score" style="color:${roundWins[0] >= 5 ? '#00ffcc' : '#ffb700'};">${roundWins[0]} / 5</td>
+            <td class="total-score" style="color:${roundWins[1] >= 5 ? '#00ffcc' : '#ffb700'};">${roundWins[1]} / 5</td>
+          </tr>
+        `;
+      }
+
+      tfoot.innerHTML = `
+        <tr class="bo-score-row">
+          <td class="total-label" style="color: #00ffcc; font-size: 15px;">TỔNG ĐIỂM BO3 LỚN</td>
+          <td class="bo-score-cell">${boWins[0]}</td>
+          <td class="bo-score-cell">${boWins[1]}</td>
+        </tr>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initData();
+      renderUI();
+    });
+  </script>
+</body>
+</html>
